@@ -25,6 +25,11 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
+            <div class="form-group form-check-inline">
+                <input asp-for="IsOwner" class="form-check-input" />
+                <label asp-for="IsOwner" class="form-check-label"></label>
+            </div>
+            <br/>
             <div class="form-group arrowpopup">
                 @Html.CheckBoxFor(m => m.Agree) I have read and agree to the <a href="#" onclick="return showToolTip();">
                     Terms and Conditions
@@ -34,7 +39,7 @@
             <div>
                 <button type="submit" id="btnRegister" class="btn btn-primary" disabled="" style="width:auto">Register</button>
             </div>
-            
+
         </form>
     </div>
 </div>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -14,6 +15,8 @@ namespace DataRoom.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
 
@@ -307,6 +310,10 @@ namespace DataRoom.Controllers
 
                 if (result.Succeeded)
                 {
+                    if (model.IsOwner)
+                    {
+                        await userManager.AddToRoleAsync(user, "Owner");
+                    }
                     // Once a user has been successfully created in the system
                     // we need to send the user an email and request the user to confirm it
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(user);

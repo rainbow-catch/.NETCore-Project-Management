@@ -26,5 +26,7 @@ namespace DataRoom.ViewModels
             ErrorMessage = "Password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
         public bool Agree { get; set; }
+
+        public bool IsOwner{ get; set; }
     }
 }

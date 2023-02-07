@@ -15,6 +15,8 @@ namespace DataRoom.Models
         //public string Phone { get; set; }
         //public string CompanyDescription { get; set; }
 
+        public List<Project> Projects { get; set; }
+        public List<BidderProject> BidderProjects { get; set; }
 
     }
 }
