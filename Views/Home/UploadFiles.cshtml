@@ -1,0 +1,55 @@
+﻿<!-- In order to post files to the server we should use form with post method, also need to add multipart/form-data encoding.
+     Otherwise the files will not be sent to the server. -->
+<br />
+<h1>Upload File</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row mt-2">
+        <div class="col-12">
+            <label class="col-form-label">Select Multiple Files</label>
+            <input type="file" name="files" class="form-control" multiple />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-12">
+            <button style="width:auto" type="submit" class="btn btn-primary">Upload Files</button>
+        </div>
+    </div>
+</form>
+
+<!-- To show the success message to the user  -->
+@if (ViewBag.Message != null)
+{
+    <div class="color-properties" id="msg">
+        @ViewBag.Message
+    </div>
+}
+
+<hr />
+
+<br />
+
+<!-- Gets all the files from the server -->
+@if (Model.Files.Count > 0)
+{
+    <h1>List of uploaded files:</h1>
+
+    <ul>
+        @foreach (var item in Model.Files)
+        {
+            <li>
+                <a asp-action="Download"
+                   asp-route-filename="@item.Name">
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ul>
+}
+
+@* This is to face off successful message *@
+
+@section Scripts {
+    <script src="~/js/CustomScript.js"></script>
+}

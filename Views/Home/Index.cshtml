@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "List of uploaded files";
+}
+
+<h1>List of uploaded files:</h1>
+<hr />
+@if (Model.Files.Count > 0)
+{
+    <ul>
+        @foreach (var item in Model.Files)
+        {
+            <li>
+                <a asp-action="Download"
+                   asp-route-filename="@item.Name">
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div>None at the moment</div>
+}
+
