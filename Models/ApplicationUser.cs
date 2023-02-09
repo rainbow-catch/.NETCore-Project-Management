@@ -17,6 +17,5 @@ namespace DataRoom.Models
 
         public List<Project> Projects { get; set; }
         public List<BidderProject> BidderProjects { get; set; }
-
     }
 }

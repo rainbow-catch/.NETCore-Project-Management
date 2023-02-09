@@ -34,10 +34,10 @@ namespace DataRoom.Models
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdb9", // primary key
-                    UserName = "admin@email.com",
+                    UserName = "admin",
                     Email = "admin@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "ADMIN@EMAIL.COM",
+                    NormalizedUserName = "ADMIN",
                     NormalizedEmail = "ADMIN@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
@@ -45,20 +45,20 @@ namespace DataRoom.Models
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdba",
-                    UserName = "owner1@email.com",
+                    UserName = "owner1",
                     Email = "owner1@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "OWNER1@EMAIL.COM",
+                    NormalizedUserName = "OWNER1",
                     NormalizedEmail = "OWNER1@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbb",
-                    UserName = "owner2@email.com",
+                    UserName = "owner2",
                     Email = "owner2@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "OWNER2@EMAIL.COM",
+                    NormalizedUserName = "OWNER2",
                     NormalizedEmail = "OWNER2@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
@@ -66,40 +66,40 @@ namespace DataRoom.Models
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbc",
-                    UserName = "bidder1@email.com",
+                    UserName = "bidder1",
                     Email = "bidder1@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "BIDDER1@EMAIL.COM",
+                    NormalizedUserName = "BIDDER1",
                     NormalizedEmail = "BIDDER1@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbd",
-                    UserName = "bidder2@email.com",
+                    UserName = "bidder2",
                     Email = "bidder2@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "BIDDER2@EMAIL.COM",
+                    NormalizedUserName = "BIDDER2",
                     NormalizedEmail = "BIDDER2@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbe",
-                    UserName = "bidder3@email.com",
+                    UserName = "bidder3",
                     Email = "bidder3@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "BIDDER3@EMAIL.COM",
+                    NormalizedUserName = "BIDDER3",
                     NormalizedEmail = "BIDDER3@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
                 new IdentityUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbf",
-                    UserName = "bidder4@email.com",
+                    UserName = "bidder4",
                     Email = "bidder4@email.com",
                     EmailConfirmed = true,
-                    NormalizedUserName = "BIDDER4@EMAIL.COM",
+                    NormalizedUserName = "BIDDER4",
                     NormalizedEmail = "BIDDER4@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 }
@@ -151,7 +151,7 @@ namespace DataRoom.Models
 
             modelBuilder.Entity<BidderProject>()
                 .HasOne(pt => pt.Project)
-                .WithMany(t => t.BidderProjects)
+                .WithMany(t => t.ProjectBidders)
                 .HasForeignKey(pt => pt.ProjectId);
         }
     }

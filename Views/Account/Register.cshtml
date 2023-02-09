@@ -11,6 +11,11 @@
         <form method="post">
             <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>            
+            <div class="form-group">
                 <label asp-for="Email"></label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
@@ -29,7 +34,7 @@
                 <input asp-for="IsOwner" class="form-check-input" />
                 <label asp-for="IsOwner" class="form-check-label"></label>
             </div>
-            <br/>
+            <br />
             <div class="form-group arrowpopup">
                 @Html.CheckBoxFor(m => m.Agree) I have read and agree to the <a href="#" onclick="return showToolTip();">
                     Terms and Conditions

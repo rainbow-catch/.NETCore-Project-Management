@@ -3,53 +3,106 @@
 <br />
 <h1>Upload File</h1>
 
-<form method="post" enctype="multipart/form-data">
-    <div class="row mt-2">
-        <div class="col-12">
-            <label class="col-form-label">Select Multiple Files</label>
-            <input type="file" name="files" class="form-control" multiple />
-        </div>
+<div class="row mt-2">
+    <div class="col-12">
+        <label class="col-form-label">Select Multiple Files</label>
+        <input id="uploadFiles" type="file" name="files" class="form-control" multiple />
     </div>
+</div>
 
-    <div class="row mt-2">
-        <div class="col-12">
-            <button style="width:auto" type="submit" class="btn btn-primary">Upload Files</button>
-        </div>
+<div class="row mt-2">
+    <div class="col-12">
+        <button style="width:auto" onclick="UploadImage()" class="btn btn-primary">Upload Files</button>
     </div>
-</form>
+</div>
 
-<!-- To show the success message to the user  -->
-@if (ViewBag.Message != null)
-{
-    <div class="color-properties" id="msg">
-        @ViewBag.Message
-    </div>
-}
+<br/>
+<div id="divmessage" class="text-center hidden"></div>
 
-<hr />
-
-<br />
-
-<!-- Gets all the files from the server -->
-@if (Model.Files.Count > 0)
-{
-    <h1>List of uploaded files:</h1>
-
-    <ul>
-        @foreach (var item in Model.Files)
-        {
-            <li>
-                <a asp-action="Download"
-                   asp-route-filename="@item.Name">
-                    @item.Name
-                </a>
-            </li>
-        }
-    </ul>
-}
-
-@* This is to face off successful message *@
+<div class="progress">
+    <div class="progress-bar progress-bar-success progress-bar-striped
+    active" role="progressbar"
+         aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div>
+</div>
 
 @section Scripts {
     <script src="~/js/CustomScript.js"></script>
+
+
+    <script>
+        $("#uploadFiles").change(function () {
+            $('.progress-bar').width('0%');
+            $('.progress-bar').html('0%');
+            $("#divmessage").addClass("hidden");
+        });
+
+        var UploadImage = function () {
+            var data = new FormData;
+            var file = $("#uploadFiles").get(0);
+            var files = file.files;
+            if (files.length == 0) {
+                $("#divmessage").text("No file selected.");
+                $("#divmessage").css("color", "red");
+                $("#divmessage").removeClass("hidden");
+                return;
+            }
+            for (var i = 0; i < files.length; i++) {
+                data.append('filearray', files[i]);
+                data.append('filesize', files[i].size);
+            }
+            data.append('path', "upload/@ViewBag.path");
+
+
+            $.ajax({
+                //add here......
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            percentComplete = parseInt(percentComplete * 100);
+
+                            $('.progress-bar').width(percentComplete + '%');
+                            $('.progress-bar').html(percentComplete + '%');
+
+                        }
+                    }, false);
+
+                    return xhr;
+                },
+
+                type: "post",
+                url: '/Home/UploadFiles',
+                data: data,
+                contentType: false,
+                processData: false
+            }).done(function (result) {
+                if (result.status == "success") {
+                    $("#divmessage").text("Upload was successful.");
+                    $("#divmessage").css("color", "green");
+                    $("#divmessage").removeClass("hidden");
+                }
+                if (result.status != "success") {
+                    var msg = "";
+                    if (result.failedFiles.length > 0)
+                        msg += "Some files(" + result.failedFiles.join(", ") + ") are not supported file format.<br/>";
+                    if (result.failedEmails.length > 0)
+                        msg += "Can't send some notify emails(" + result.failedEmails.join(", ") + ").";
+                    $("#divmessage").text(msg);
+                    $("#divmessage").css("color", "red");
+                    $("#divmessage").removeClass("hidden");
+                }
+
+            }).fail(function (result) {
+                if (result.status != "success") {
+                    $("#divmessage").css("color", "red");
+                    $("#divmessage").removeClass("hidden");
+                    $("#divmessage").text("There was a problem uploading.");
+                }
+            });
+
+
+        }
+    </script>
 }

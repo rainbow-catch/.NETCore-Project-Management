@@ -4,6 +4,7 @@ using FileUploadDownload.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -19,12 +20,17 @@ namespace DataRoom.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IHostEnvironment _hostingEnvironment;
+        private readonly AppDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private ApplicationUser _currentuser;
 
         public HomeController(IEmployeeRepository employeeRepository,
-                              IHostEnvironment hostingEnvironment)
+                              IHostEnvironment hostingEnvironment, AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             _employeeRepository = employeeRepository;
             _hostingEnvironment = hostingEnvironment;
+            _context = context;
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -35,6 +41,29 @@ namespace DataRoom.Controllers
         {
             // Get files from the server
             var model = new FilesViewModel();
+            var directories = new List<String> { };
+            List<Project> projects = new List<Project> { };
+            _currentuser = _userManager.GetUserAsync(User).Result;
+
+            if (User.IsInRole("Admin"))
+                projects = _context.Project.ToList();
+            if(User.IsInRole("Owner"))
+            {
+                projects.AddRange(_context.Project.Where(p => p.OwnerId == _currentuser.Id).ToList());
+            }
+            if (User.IsInRole("Bidder"))
+            {
+                var bidderProject = _context.BidderProjects.Where(b=>b.BidderId==_currentuser.Id).Select(b => b.ProjectId).ToList();
+                projects.AddRange(_context.Project.Where(p => bidderProject.Contains(p.Id)).ToList());
+            }
+            foreach (var project in projects)
+            {
+                model.Directories.Add(new DirectoryDetails
+                {
+                    Name = project.Name,
+                    Path = Path.Combine(Directory.GetCurrentDirectory(), "upload/" + project.Name)
+                });
+            }
 
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload")))
             {
@@ -45,34 +74,94 @@ namespace DataRoom.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult UploadFiles()
+        /// <summary>
+        /// List files for project
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Project(string projectName)
         {
-            // Gets files from the server
-            // https://www.techieclues.com/articles/how-to-upload-and-download-files-in-asp-net-core
+            // Get files from the server
             var model = new FilesViewModel();
+            var directories = new List<String> { };
+            var project = _context.Project.Where(p => p.Name == projectName).FirstOrDefault();
+            List<BidderProject> bidders = _context.BidderProjects.Where(b => b.ProjectId == project.Id).ToList();
 
-            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload")))
+            _currentuser = _userManager.GetUserAsync(User).Result;
+
+            if (User.IsInRole("Bidder"))
+            {
+                bidders = bidders.Where(b => b.BidderId == _currentuser.Id).ToList();
+            }
+            if (bidders != null)
+                foreach (var b in bidders)
+                {
+                    var bidder = _context.Users.Where(u => u.Id == b.BidderId).First().UserName;
+                    model.Directories.Add(new DirectoryDetails
+                    {
+                        Name = bidder,
+                        Path = Path.Combine(Directory.GetCurrentDirectory(), "upload/" + bidder)
+                    });
+                }
+
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload/" + projectName)))
             {
                 model.Files.Add(
                     new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
             }
-            
+            ViewBag.projectName = projectName;
+
             return View(model);
+        }
+
+        /// <summary>
+        /// List files for Bidder
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Bidder(string projectName, string bidderName = null)
+        {
+            // Get files from the server
+            var model = new FilesViewModel();
+
+            _currentuser = _userManager.GetUserAsync(User).Result;
+            var project = _context.Project.Where(p => p.Name == projectName).FirstOrDefault();
+
+            foreach (var item in Directory.GetFiles(
+                Path.Combine(Directory.GetCurrentDirectory(), "upload/" + projectName + "/" + bidderName)))
+            {
+                model.Files.Add(
+                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+            }
+            ViewBag.projectName = projectName;
+            ViewBag.bidderName = bidderName;
+            return View(model);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult UploadFiles(string path)
+        {
+            ViewBag.path = path;
+            return View();
         }
 
         [HttpPost]
-        public IActionResult UploadFiles(IFormFile[] files)
+        public IActionResult UploadFiles(IFormFile[] filearray, Double[] filesize, string path)
         {
             // Iterate each files
-            foreach (var file in files)
+            var illegalFiles = new List<string> { };
+            foreach (var file in filearray)
             {
                 // Gets the file name from the browser
                 var fileName = System.IO.Path.GetFileName(file.FileName);
 
                 // Gets file path to be uploaded
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "upload", fileName);
-
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), path, fileName);
+                if(GetContentType(filePath)==null)
+                {
+                    illegalFiles.Add(fileName);
+                    continue;
+                }
                 // Checks If file with same name exists and delete it
                 if (System.IO.File.Exists(filePath))
                 {
@@ -90,16 +179,24 @@ namespace DataRoom.Controllers
             
             ViewBag.Message = "Files are successfully uploaded";
 
-            // Gets files from the server
-            var model = new FilesViewModel();
-            
-            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload")))
+            var projectName = path.Split("//")[1];
+            var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
+            var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
+            var projectLink = this.Url.Action("project", "Home", new { projectName = projectName });
+            EmailHelper emailHelper = new EmailHelper();
+            var failedResponse = new List<String>{ };
+            foreach (var bidder in bidders)
             {
-                model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                var response = emailHelper.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
+            Request.Host, projectLink));
+                if (!response)
+                    failedResponse.Add(bidder.UserName);
             }
-            
-            return View(model);
+
+            if (illegalFiles.Count == 0 && failedResponse.Count == 0)
+                return Json(new { status = "success" });
+            else
+                return Json(new { status = "failed", failedFiles = illegalFiles, failedEmails = failedResponse });
         }
 
         // Downloads file from the server
@@ -123,12 +220,14 @@ namespace DataRoom.Controllers
         }
 
         // Gets content type
-        private string GetContentType(string path)
+        private string? GetContentType(string path)
         {
             var types = GetMimeTypes();
             var ext = Path.GetExtension(path).ToLowerInvariant();
-            
-            return types[ext];
+            if (types.ContainsKey(ext))
+                return types[ext];
+            else
+                return null;
         }
 
         // Gets mime types

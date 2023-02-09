@@ -100,7 +100,7 @@ namespace DataRoom.Controllers
                     {
                         user = new ApplicationUser
                         {
-                            UserName = info.Principal.FindFirstValue(ClaimTypes.Email),
+                            UserName = info.Principal.FindFirstValue(ClaimTypes.Name),
                             Email = info.Principal.FindFirstValue(ClaimTypes.Email)
                         };
 
@@ -301,7 +301,7 @@ namespace DataRoom.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.Email,
+                    UserName = model.Name,
                     Email = model.Email
                     //City = model.City
                 };
@@ -439,7 +439,7 @@ namespace DataRoom.Controllers
                 // lockedout, even if we provide the correct username and password,
                 // PasswordSignInAsync() method returns Lockedout result and the login
                 // will not be allowed for the duration the account is locked.
-                var result = await signInManager.PasswordSignInAsync(model.Email,
+                var result = await signInManager.PasswordSignInAsync(user.UserName,
                                                 model.Password, model.RememberMe, true);
 
                 if (result.Succeeded)

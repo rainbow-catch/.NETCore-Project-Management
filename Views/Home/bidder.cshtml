@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "List of uploaded files";
+}
+
+<h1>Path: /@ViewBag.projectName/@ViewBag.bidderName</h1>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Bidder"))
+{
+    <a class="btn btn-primary" asp-action="UploadFiles" asp-route-path="/@ViewBag.projectName/@ViewBag.bidderName">Upload</a>
+}
+<br />
+<a asp-action="project" asp-route-projectName="@ViewBag.projectName">back</a>
+@if (Model.Files.Count > 0)
+{
+    <ul>
+        @foreach (var item in Model.Files)
+        {
+            <li>
+                <a asp-action="Download"
+                   asp-route-filename="@ViewBag.projectName/@ViewBag.bidderName/@item.Name">
+                    @item.Name
+                </a>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div>None at the moment</div>
+}
+
