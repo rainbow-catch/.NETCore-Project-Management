@@ -86,7 +86,7 @@
                 if (result.status != "success") {
                     var msg = "";
                     if (result.failedFiles.length > 0)
-                        msg += "Some files(" + result.failedFiles.join(", ") + ") are not supported file format.<br/>";
+                        msg += "Some files(" + result.failedFiles.join(", ") + ") are not supported file format.";
                     if (result.failedEmails.length > 0)
                         msg += "Can't send some notify emails(" + result.failedEmails.join(", ") + ").";
                     $("#divmessage").text(msg);

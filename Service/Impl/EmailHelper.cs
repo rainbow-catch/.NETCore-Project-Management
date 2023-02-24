@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Mail;
-//using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using DataRoom.Service.Interface;
+using DataRoom.Models;
 
-namespace DataRoom.Models
+namespace DataRoom.Service.Impl
 {
-    public class EmailHelper
+    public class EmailHelper : IEmailHelper
     {
-        //private readonly ILogger<EmailHelper> _logger;
+        private readonly ILogger<IEmailHelper> _logger;
+        private IConfiguration _config;
 
-        //public EmailHelper(ILogger<EmailHelper> logger)
-        //{
-        //    _logger = logger;
-        //}
+        public EmailHelper(ILogger<IEmailHelper> logger, IConfiguration config)
+        {
+            _logger = logger;
+            _config = config;
+        }
 
         public bool SendEmailPasswordReset(string userEmail, string link)
         {
@@ -26,13 +31,14 @@ namespace DataRoom.Models
             mailMessage.IsBodyHtml = true;
             mailMessage.Body = link;
 
+            var smtpConfig = _config.GetSection("SMTP").Get<SmtpConfig>();
             SmtpClient smtp = new SmtpClient();
-            smtp.Credentials = new System.Net.NetworkCredential("sthay@mof.gov.tl", "For_security_reason_I_took_out_the_real_password_already");
-            smtp.Host = "webmail.mof.gov.tl";
+            smtp.Credentials = new System.Net.NetworkCredential(smtpConfig.User??"", smtpConfig.Password??"");
+            smtp.Host = smtpConfig.Host;
 
             // Exchange listens for authenticated SMTP client submissions
             // on port 587 on the Client Access server
-            smtp.Port = 25;
+            smtp.Port = smtpConfig.Port;
 
             // Smtp Email ID and Password For authentication
             //smtp.EnableSsl = true;
@@ -65,14 +71,16 @@ namespace DataRoom.Models
             mailMessage.IsBodyHtml = true;
             mailMessage.Body = link;
 
+            var smtpConfig = _config.GetSection("SMTP").Get<SmtpConfig>();
             SmtpClient smtp = new SmtpClient();
-            smtp.Credentials = new System.Net.NetworkCredential("sthay@mof.gov.tl", "For_security_reason_I_took_out_the_real_password_already");
-            smtp.Host = "webmail.mof.gov.tl";
+            smtp.Credentials = new System.Net.NetworkCredential(smtpConfig.User ?? "", smtpConfig.Password ?? "");
+            smtp.Host = smtpConfig.Host;
 
             // Exchange listens for authenticated SMTP client submissions
             // on port 587 on the Client Access server
-            smtp.Port = 25;
+            smtp.Port = smtpConfig.Port;
 
+            //Email Sender
             // Smtp Email ID and Password For authentication
             //smtp.EnableSsl = true;
 

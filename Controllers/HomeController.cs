@@ -1,4 +1,5 @@
 ﻿using DataRoom.Models;
+using DataRoom.Service.Interface;
 using DataRoom.ViewModels;
 using FileUploadDownload.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,15 +23,18 @@ namespace DataRoom.Controllers
         private readonly IHostEnvironment _hostingEnvironment;
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailHelper _emailHelper;
         private ApplicationUser _currentuser;
 
         public HomeController(IEmployeeRepository employeeRepository,
-                              IHostEnvironment hostingEnvironment, AppDbContext context, UserManager<ApplicationUser> userManager)
+            IHostEnvironment hostingEnvironment, AppDbContext context, 
+            UserManager<ApplicationUser> userManager, IEmailHelper emailHelper)
         {
             _employeeRepository = employeeRepository;
             _hostingEnvironment = hostingEnvironment;
             _context = context;
             _userManager = userManager;
+            _emailHelper = emailHelper;
         }
 
         /// <summary>
@@ -177,24 +181,24 @@ namespace DataRoom.Controllers
                 }
             }
             
-            ViewBag.Message = "Files are successfully uploaded";
-
             var projectName = path.Split("//")[1];
             var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
             var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
             var projectLink = this.Url.Action("project", "Home", new { projectName = projectName });
-            EmailHelper emailHelper = new EmailHelper();
-            var failedResponse = new List<String>{ };
+            var failedResponse = new List<String> { };
             foreach (var bidder in bidders)
             {
-                var response = emailHelper.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
+                var response = _emailHelper.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
             Request.Host, projectLink));
                 if (!response)
                     failedResponse.Add(bidder.UserName);
             }
 
             if (illegalFiles.Count == 0 && failedResponse.Count == 0)
+            {
+                ViewBag.Message = "Files are successfully uploaded";
                 return Json(new { status = "success" });
+            }
             else
                 return Json(new { status = "failed", failedFiles = illegalFiles, failedEmails = failedResponse });
         }
@@ -233,20 +237,16 @@ namespace DataRoom.Controllers
         // Gets mime types
         private Dictionary<string, string> GetMimeTypes()
         {
-            return new Dictionary<string, string>
-                    {
-                        {".txt", "text/plain"},
-                        {".pdf", "application/pdf"},
-                        {".doc", "application/vnd.ms-word"},
-                        {".docx", "application/vnd.ms-word"},
-                        {".xls", "application/vnd.ms-excel"},
-                        {".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
-                        {".png", "image/png"},
-                        {".jpg", "image/jpeg"},
-                        {".jpeg", "image/jpeg"},
-                        {".gif", "image/gif"},
-                        {".csv", "text/csv"}
-                    };
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "static", "mimetype.txt");
+            var readFile =  System.IO.File.ReadAllText(path);
+            var mimeTypes = new Dictionary<string, string> { };
+            foreach(var mimeType in readFile.Split('\n'))
+            {
+                var key = mimeType.Split(',')[0].Trim();
+                var value = mimeType.Split(',')[1].Trim();
+                mimeTypes.Add(key, value);
+            }
+            return mimeTypes;
         }
 
         public ViewResult GetAllEmployees()

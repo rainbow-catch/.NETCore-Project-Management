@@ -1,4 +1,5 @@
 ﻿using DataRoom.Models;
+using DataRoom.Service.Interface;
 using DataRoom.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,14 +20,16 @@ namespace DataRoom.Controllers
 
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
+        private readonly IEmailHelper emailHelper;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<AccountController> logger)
+            ILogger<AccountController> logger, IEmailHelper emailHelper)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
+            this.emailHelper = emailHelper;
         }
 
         [AllowAnonymous]
@@ -197,7 +200,6 @@ namespace DataRoom.Controllers
                     //logger.Log(LogLevel.Warning, passwordResetLink);
 
                     // https://www.yogihosting.com/aspnet-core-identity-password-reset/
-                    EmailHelper emailHelper = new EmailHelper();
 
                     var emailResponse = emailHelper.SendEmailPasswordReset(user.Email, passwordResetLink);
 
@@ -319,8 +321,6 @@ namespace DataRoom.Controllers
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId=user.Id, token=token }, Request.Scheme);
                     
-                    EmailHelper emailHelper = new EmailHelper();
-
                     var emailResponse = emailHelper.SendEmailPasswordReset(user.Email, confirmationLink);
 
                     // If the user is signed in and in the Admin role, then it is
