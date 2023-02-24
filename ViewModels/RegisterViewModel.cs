@@ -16,7 +16,10 @@ namespace DataRoom.ViewModels
         //[ValidEmailDomainAttribute(allowDomain: "icloud.com", ErrorMessage=" Email domain must be icloud.com")]
         public string Email { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string CompanyName { get; set; }
+        public string PhoneNumber { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

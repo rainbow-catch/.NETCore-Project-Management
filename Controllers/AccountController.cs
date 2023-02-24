@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -292,6 +293,9 @@ namespace DataRoom.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
+            var termsTxtPath = Path.Combine(Directory.GetCurrentDirectory(), "static", "terms.txt");
+            var terms = System.IO.File.ReadAllText(termsTxtPath);
+            ViewBag.termsAndCondition = terms.Replace("\r", "&nbsp;").Replace("\n", "<br/>");
             return View();
         }
 
@@ -303,7 +307,10 @@ namespace DataRoom.Controllers
             {
                 var user = new ApplicationUser
                 {
-                    UserName = model.Name,
+                    UserName = model.FirstName,
+                    LastName = model.LastName,
+                    CompanyName = model.CompanyName,
+                    PhoneNumber = model.PhoneNumber,
                     Email = model.Email
                     //City = model.City
                 };

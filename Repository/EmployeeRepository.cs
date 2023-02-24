@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataRoom.Models
 {
-    public class SqlEmployeeRepository : IEmployeeRepository
+    public class EmployeeRepository : IEmployeeRepository
     {
         private readonly AppDbContext context;
-        public SqlEmployeeRepository(AppDbContext context)
+        public EmployeeRepository(AppDbContext context)
         {
             this.context = context;
         }

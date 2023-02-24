@@ -1,4 +1,5 @@
 .txt, text/plain
+.pdf, application/pdf
 .doc, application/vnd.ms-word
 .docx, application/vnd.ms-word
 .xls, application/vnd.ms-excel

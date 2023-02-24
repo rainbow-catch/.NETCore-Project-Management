@@ -31,10 +31,13 @@ namespace DataRoom.Models
             //Seeding the User to AspNetUsers table
             modelBuilder.Entity<ApplicationUser>().HasData(
                 // Admin
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdb9", // primary key
                     UserName = "admin",
+                    LastName = "admin",
+                    CompanyName = "",
+                    PhoneNumber = "123456789",
                     Email = "admin@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "ADMIN",
@@ -42,20 +45,26 @@ namespace DataRoom.Models
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
                 // Owners
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdba",
                     UserName = "owner1",
+                    LastName = "owner1",
+                    CompanyName = "owner company",
+                    PhoneNumber = "123456789",
                     Email = "owner1@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "OWNER1",
                     NormalizedEmail = "OWNER1@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbb",
                     UserName = "owner2",
+                    LastName = "owner2",
+                    CompanyName = " company",
+                    PhoneNumber = "123456789",
                     Email = "owner2@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "OWNER2",
@@ -63,40 +72,52 @@ namespace DataRoom.Models
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
                 // Bidders
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbc",
                     UserName = "bidder1",
+                    LastName = "bidder1",
+                    CompanyName = "bidder company",
+                    PhoneNumber = "123456789",
                     Email = "bidder1@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER1",
                     NormalizedEmail = "BIDDER1@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbd",
                     UserName = "bidder2",
+                    LastName = "bidder2",
+                    CompanyName = "bidder company",
+                    PhoneNumber = "123456789",
                     Email = "bidder2@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER2",
                     NormalizedEmail = "BIDDER2@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
-                },
-                new IdentityUser
+                }, 
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbe",
                     UserName = "bidder3",
+                    LastName = "bidder3",
+                    CompanyName = "bidder company",
+                    PhoneNumber = "123456789",
                     Email = "bidder3@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER3",
                     NormalizedEmail = "BIDDER3@EMAIL.COM",
                     PasswordHash = hasher.HashPassword(null, "Pa$$w0rd")
                 },
-                new IdentityUser
+                new ApplicationUser
                 {
                     Id = "8e445865-a24d-4543-a6c6-9443d048cdbf",
                     UserName = "bidder4",
+                    LastName = "bidder4",
+                    CompanyName = "bidder company",
+                    PhoneNumber = "123456789",
                     Email = "bidder4@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER4",

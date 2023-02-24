@@ -63,7 +63,7 @@ namespace DataRoom
             services.AddControllers(options => options.EnableEndpointRouting = false);
 
             // If someone like HomeController reqeusts IEmployeeRepository service, then create instance of MockEmployeeRepository class and then injects that instance
-            services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IEmailHelper, EmailHelper>();
             // services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
 
