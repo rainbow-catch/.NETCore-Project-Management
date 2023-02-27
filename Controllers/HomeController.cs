@@ -1,5 +1,6 @@
 ﻿using DataRoom.Models;
 using DataRoom.Utilities;
+using DataRoom.Service.Interface;
 using DataRoom.ViewModels;
 using FileUploadDownload.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -209,23 +210,15 @@ namespace DataRoom.Controllers
                     uploadedFile.CopyTo(localFile);
                 }
             }
-
-            ViewBag.Message = "Files are successfully uploaded";
-            return Json(new { status = "success" });
-
-            /*
-            // Notify bidders about newly upladed files by the project owner
+            
             var projectName = path.Split("//")[1];
             var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
             var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
             var projectLink = this.Url.Action("project", "Home", new { projectName = projectName });
-            
-            //EmailHelper emailHelper = new EmailHelper();
-            
             var failedResponse = new List<String> { };
 
             string subjectLine = "New project file(s) uploaded by project owner";
-            
+
             foreach (var bidder in bidders)
             {
                 //var response = _emailService.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
@@ -238,11 +231,13 @@ namespace DataRoom.Controllers
             }
 
             if (illegalFiles.Count == 0 && failedResponse.Count == 0)
+            {
+                ViewBag.Message = "Files are successfully uploaded";
                 return Json(new { status = "success" });
+            }
             else
                 return Json(new { status = "failed", failedFiles = illegalFiles, failedEmails = failedResponse });
 
-            */
         }
 
         // Downloads file from the server
@@ -283,23 +278,16 @@ namespace DataRoom.Controllers
         // Gets mime types
         private Dictionary<string, string> GetMimeTypes()
         {
-            return new Dictionary<string, string>
-                    {
-                        {".txt", "text/plain"},
-                        {".pdf", "application/pdf"},
-                        {".doc", "application/vnd.ms-word"},
-                        {".docx", "application/vnd.ms-word"},
-                        {".xls", "application/vnd.ms-excel"},
-                        {".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
-                        {".png", "image/png"},
-                        {".jpg", "image/jpeg"},
-                        {".jpeg", "image/jpeg"},
-                        {".gif", "image/gif"},
-                        {".csv", "text/csv"},
-                        {".zip", "application/zip"},
-                        {".rar", "application/x-rar"}
-
-                      };
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "static", "mimetype.txt");
+            var readFile =  System.IO.File.ReadAllText(path);
+            var mimeTypes = new Dictionary<string, string> { };
+            foreach(var mimeType in readFile.Split('\n'))
+            {
+                var key = mimeType.Split(',')[0].Trim();
+                var value = mimeType.Split(',')[1].Trim();
+                mimeTypes.Add(key, value);
+            }
+            return mimeTypes;
         }
 
         public ViewResult GetAllEmployees()

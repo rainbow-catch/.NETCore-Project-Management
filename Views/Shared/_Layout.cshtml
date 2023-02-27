@@ -26,7 +26,7 @@
 </head>
 <body>
 
-    <div class="container">
+    <div>
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <a class="navbar-brand" asp-controller="home" asp-action="index">
                 <img src="~/images/icon.png" width="30" height="30">
@@ -67,7 +67,7 @@
                     @if (signIntManager.IsSignedIn(User))
                     {
                         <li class="nav-item" style="align-self: center;">
-                            <form method="post" asp-action="logout" asp-controller="account">
+                            <form method="post" asp-action="logout" asp-controller="account" style="margin-bottom:0">
                                 <button type="submit" class="nav-link btn btn-link py-0" style="width: auto">
                                     Logout @User.Identity.Name
                                 </button>
@@ -88,7 +88,7 @@
             </div>
         </nav>
 
-        <div>
+        <div class="container pt-2">
             @RenderBody()
         </div>
 

@@ -3,22 +3,27 @@
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var bidders = new Dictionary<string, string> { };
+    foreach(var item in ViewBag.bidders)
+    {
+        bidders.Add(item.Id, item.UserName);
+    }
 }
 
 <h1>Edit</h1>
 <h4>Project</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <div class="form-group col-md-4">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group col-md-4">
                 <label asp-for="OwnerId" class="control-label"></label>
                 <select asp-for="OwnerId" class="form-control">
                     <option value=""></option>
@@ -28,15 +33,39 @@
                     }
                 </select>
             </div>
-            <div class="form-group">
-                <label asp-for="ProjectBidders" class="control-label"></label>
-                <select asp-for="ProjectBidders" class="form-control" multiple>
-                    <option value=""></option>
-                    @for (int i = 0; i < ViewBag.bidders.Count; i++)
-                    {
-                        <option value="@ViewBag.bidders[i].Id" selected="@Model.ProjectBidders.Contains(ViewBag.bidders[i].Id)">@ViewBag.bidders[i].UserName</option>
-                    }
-                </select>
+            <div class="row col-md-10">
+                <div class="form-group col-md-4">
+                    <label for="allBidders" class="control-label">All Bidders</label>
+                    <select id="allBidders" class="form-control" size="5" multiple>
+                        @for (int i = 0; i < ViewBag.bidders.Count; i++)
+                        {
+                            <option value="@ViewBag.bidders[i].Id">@ViewBag.bidders[i].UserName</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 pt-10 d-flex flex-column justify-content-center align-items-center">
+                    <ul class="list-group w-auto text-center" style="cursor:pointer">
+                        <li class="list-group-item px-5 py-1 addBidder"><a>></a></li>
+                        <li class="list-group-item px-5 py-1 removeBidder"><a><</a></li>
+                        <li class="list-group-item px-5 py-1 addAll"><a>»</a></li>
+                        <li class="list-group-item px-5 py-1 removeAll"><a>«</a></li>
+                    </ul>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="ProjectBidders" class="control-label">Project Bidders</label>
+                    <select asp-for="ProjectBidders" class="form-control" size="5" multiple hidden>
+                        @foreach (var bidder in Model.ProjectBidders)
+                        {
+                            <option value="@bidder" selected>@bidders[bidder]</option>
+                        }
+                    </select>
+                    <select id="selectedBidders" class="form-control" size="5" multiple>
+                        @foreach (var bidder in Model.ProjectBidders)
+                        {
+                            <option value="@bidder">@bidders[bidder]</option>
+                        }
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -51,4 +80,38 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Add selected bidders from left list
+        $(".addBidder").click(function () {
+            $("#allBidders").val().forEach(id => {
+                if ($("#ProjectBidders option[value='" + id + "']").length > 0) return;
+                var name = $("option[value='" + id + "']").text();
+                var optionTagSelected = "<option value='" + id + "' selected>" + name + "</option>";
+                var optionTag = "<option value='" + id + "'>" + name + "</option>";
+                $("#ProjectBidders").append(optionTagSelected);
+                $("#selectedBidders").append(optionTag);
+            })
+        })
+
+        // Remove selected bidders from right list
+        $(".removeBidder").click(function () {
+            $("#selectedBidders").val().forEach(id => {
+                $("#ProjectBidders option[value='" + id + "']").remove()
+                $("#selectedBidders option[value='" + id + "']").remove()
+            })
+        })
+
+        // Add all bidders
+        $(".addAll").click(function () {
+            $("#ProjectBidders").html($("#allBidders").html())
+            $("#selectedBidders").html($("#allBidders").html())
+            $("#ProjectBidders option").prop('selected', true);
+        })
+
+        // Emplty right bidder list
+        $(".removeAll").click(function () {
+            $("#ProjectBidders").html("")
+            $("#selectedBidders").html("")
+        })
+    </script>
 }

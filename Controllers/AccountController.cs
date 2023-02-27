@@ -1,4 +1,5 @@
 ﻿using DataRoom.Models;
+using DataRoom.Service.Interface;
 using DataRoom.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -145,6 +146,7 @@ namespace DataRoom.Controllers
                             StreetAddress = info.Principal.FindFirstValue(ClaimTypes.StreetAddress),
                             // City = info.Principal.FindFirstValue(ClaimTypes.Country),
                             Country = info.Principal.FindFirstValue(ClaimTypes.Country),
+                            PhoneNumber = info.Principal.FindFirstValue(ClaimTypes.MobilePhone),
 
                             UserName = userName,
                             Email = info.Principal.FindFirstValue(ClaimTypes.Email)
@@ -364,6 +366,9 @@ namespace DataRoom.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
+            var termsTxtPath = Path.Combine(Directory.GetCurrentDirectory(), "static", "terms.txt");
+            var terms = System.IO.File.ReadAllText(termsTxtPath);
+            ViewBag.termsAndCondition = terms.Replace("\r", "&nbsp;").Replace("\n", "<br/>");
             return View();
         }
 
@@ -374,17 +379,18 @@ namespace DataRoom.Controllers
             if (ModelState.IsValid)
             {
                 MailAddress address = new MailAddress(model.Email);
-                string userName = address.User;
                 
                 var user = new ApplicationUser
                 {
-                    Name=model.Name,
-                    CompanyName=model.CompanyName,
                     StreetAddress=model.StreetAddress,
                     City=model.City,
                     Country=model.Country,
 
-                    UserName = userName,
+                    Name = model.FirstName,
+                    LastName = model.LastName,
+                    UserName = model.Name,
+                    CompanyName = model.CompanyName,
+                    PhoneNumber = model.PhoneNumber,
                     Email = model.Email
                 };
 

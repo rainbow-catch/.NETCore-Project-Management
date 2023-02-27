@@ -41,6 +41,8 @@ namespace DataRoom.Models
                     Country="Timor-Leste",
 
                     UserName = "admin",
+                    LastName = "admin",
+                    PhoneNumber = "123456789",
                     Email = "admin@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "ADMIN",
@@ -58,6 +60,8 @@ namespace DataRoom.Models
                     Country = "Timor-Leste",
 
                     UserName = "owner1",
+                    LastName = "owner1",
+                    PhoneNumber = "123456789",
                     Email = "owner1@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "OWNER1",
@@ -74,6 +78,8 @@ namespace DataRoom.Models
                     Country = "Timor-Leste",
 
                     UserName = "owner2",
+                    LastName = "owner2",
+                    PhoneNumber = "123456789",
                     Email = "owner2@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "OWNER2",
@@ -91,6 +97,8 @@ namespace DataRoom.Models
                     Country = "Timor-Leste",
 
                     UserName = "bidder1",
+                    LastName = "bidder1",
+                    PhoneNumber = "123456789",
                     Email = "bidder1@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER1",
@@ -107,6 +115,8 @@ namespace DataRoom.Models
                     Country = "Timor-Leste",
 
                     UserName = "bidder2",
+                    LastName = "bidder2",
+                    PhoneNumber = "123456789",
                     Email = "bidder2@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER2",
@@ -123,6 +133,8 @@ namespace DataRoom.Models
                     Country = "Timor-Leste",
 
                     UserName = "bidder3",
+                    LastName = "bidder3",
+                    PhoneNumber = "123456789",
                     Email = "bidder3@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER3",
@@ -139,6 +151,8 @@ namespace DataRoom.Models
                     Country = "Timor-Leste",
 
                     UserName = "bidder4",
+                    LastName = "bidder4",
+                    PhoneNumber = "123456789",
                     Email = "bidder4@email.com",
                     EmailConfirmed = true,
                     NormalizedUserName = "BIDDER4",

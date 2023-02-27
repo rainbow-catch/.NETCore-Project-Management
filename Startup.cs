@@ -1,4 +1,6 @@
 using DataRoom.Models;
+using DataRoom.Service.Impl;
+using DataRoom.Service.Interface;
 using DataRoom.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -75,7 +77,8 @@ namespace DataRoom
             services.AddControllers(options => options.EnableEndpointRouting = false);
 
             // If someone like HomeController reqeusts IEmployeeRepository service, then create instance of MockEmployeeRepository class and then injects that instance
-            services.AddScoped<IEmployeeRepository, SqlEmployeeRepository>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IEmailHelper, EmailHelper>();
             // services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
 
             // We use SqlServer as a database providers

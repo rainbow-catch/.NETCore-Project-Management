@@ -28,11 +28,17 @@ namespace DataRoom.ViewModels
         [Required, MaxLength(25, ErrorMessage = "Country name cannot exceed 25 characters")]
         public string Country { get; set; }
 
+        [Required]
         [EmailAddress]
         [Remote(action: "IsEmailInUse", controller: "Account")]
         //[ValidEmailDomainAttribute(allowDomain: "icloud.com", ErrorMessage=" Email domain must be icloud.com")]
         public string Email { get; set; }
-
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
+        public string PhoneNumber { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -45,6 +51,6 @@ namespace DataRoom.ViewModels
         public string ConfirmPassword { get; set; }
         public bool Agree { get; set; }
 
-        //        public bool IsOwner{ get; set; }
+        public bool IsOwner{ get; set; }
     }
 }

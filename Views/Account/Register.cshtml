@@ -7,72 +7,110 @@
 <h1>User Registration</h1>
 <hr />
 
-<form method="post">
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="row">
-        <div class="col-md-6">
-
-            <div class="form-group">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div class="row">
+    <form method="post" class="col-md-12">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="CompanyName"></label>
-                <input asp-for="CompanyName" class="form-control" />
-                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="StreetAddress"></label>
+                    <input asp-for="StreetAddress" class="form-control" />
+                    <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CompanyName"></label>
+                    <input asp-for="CompanyName" class="form-control" />
+                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Country"></label>
+                    <input asp-for="Country" class="form-control" />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="StreetAddress"></label>
-                <input asp-for="StreetAddress" class="form-control" />
-                <span asp-validation-for="StreetAddress" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="City"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-
+        </div>
+        <div class="form-check form-check-inline mb-2">
+            <input asp-for="IsOwner" class="form-check-input" />
+            <label asp-for="IsOwner" class="form-check-label"></label>
+        </div>
+        <br />
+        <div class="form-check form-check-inline mb-2">
+            <input id="termCheck" type="checkbox" class="form-check-input" />
+            <label for="termCheck" class="form-check-label">
+                I have read and agree to the
+                <a href="#" data-toggle="modal" data-target="#termModal">
+                    Terms and Conditions
+                </a>
+            </label>
+        </div>
+        <br />
+        <div>
+            <button type="submit" id="btnRegister" class="btn btn-primary" disabled="" style="width:auto">Register</button>
         </div>
 
-
-        <div class="col-md-6">
-            <div class="form-group">
-                <label asp-for="Country"></label>
-                <input asp-for="Country" class="form-control" />
-                <span asp-validation-for="Country" class="text-danger"></span>
+    </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="termModal" tabindex="-1" role="dialog" aria-labelledby="termModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="termModalLabel">Terms and Conditions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+            <div class="modal-body">
+                @Html.Raw(ViewBag.termsAndCondition)
             </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-
         </div>
     </div>
-    <br />
-    <div class="form-group arrowpopup">
-        @Html.CheckBoxFor(m => m.Agree) I have read and agree to the <a href="#" onclick="return showToolTip();">
-            Terms and Conditions
-        </a>
-        <span class="tooltiptext" id="tooltipdemo">Confidentiality undertaking due to public procurement law restriction applicable to country context.</span>
-    </div>
-    <div>
-        <button type="submit" id="btnRegister" class="btn btn-primary" disabled="" style="width:auto">Register</button>
-    </div>
-</form>
-
-
+</div>
 
 @section Scripts {
     <script src="~/js/CustomScript.js"></script>
