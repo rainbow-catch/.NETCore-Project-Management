@@ -3,7 +3,7 @@
 }
 
 <h1>Path: /@ViewBag.projectName/@ViewBag.bidderName</h1>
-@if (User.Identity.IsAuthenticated && User.IsInRole("Bidder"))
+@if (User.Identity.IsAuthenticated && User.IsInRole("Bidders"))
 {
     <a class="btn btn-primary" asp-action="UploadFiles" asp-route-path="/@ViewBag.projectName/@ViewBag.bidderName">Upload</a>
 }

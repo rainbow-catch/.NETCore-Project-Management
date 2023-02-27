@@ -1,4 +1,5 @@
 using DataRoom.Models;
+using DataRoom.Utilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -44,8 +45,11 @@ namespace DataRoom
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
 
-                // Confrim email or else, we dont allow user to login even
-                // after the user registration is completed
+                // This is to allow UserName field to contain special character such as symbol @
+                options.User.AllowedUserNameCharacters = null;
+
+                // Confrim email or else, we dont allow user to login even after the user registration is completed
+                // This is to be used by method ExternalLoginCallback of AccountController
                 options.SignIn.RequireConfirmedEmail = true;
 
                 // Account lockout
@@ -58,6 +62,16 @@ namespace DataRoom
             // Set the token validity to 10 hours. So this means the user can change the password in under 10 hours time.
             services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromHours(10));
 
+            // EmailConfiguration
+            //https://codewithmukesh.com/blog/send-emails-with-aspnet-core/
+            //services.Configure<MailSettings>(_config.GetSection("MailSettings"));
+            //services.AddTransient<IMailService, MailService>();
+
+            //https://procodeguide.com/programming/how-to-send-emails-in-aspnet-core/
+            services.Configure<EmailSettings>(_config.GetSection(nameof(EmailSettings)));
+            services.AddTransient<IEmailService, EmailService>();
+
+
             services.AddControllers(options => options.EnableEndpointRouting = false);
 
             // If someone like HomeController reqeusts IEmployeeRepository service, then create instance of MockEmployeeRepository class and then injects that instance
@@ -65,7 +79,7 @@ namespace DataRoom
             // services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
 
             // We use SqlServer as a database providers
-            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection")));
+            services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(_config.GetConnectionString("DataRoomSqlExpressConn")));
 
             services.AddMvc(config => {
                 var policy = new AuthorizationPolicyBuilder()
@@ -96,7 +110,7 @@ namespace DataRoom
                 // Roles
                 // This is used in Administration controller 
                 options.AddPolicy("AdminRolePolicy",
-                    policy => policy.RequireRole("Admin") // Adds more roles here via chain method
+                    policy => policy.RequireRole("Admins") // Adds more roles here via chain method
                     );
 
             });
@@ -119,24 +133,22 @@ namespace DataRoom
             })
             .AddGoogle(options =>
             {
-                options.ClientId = "280608216916-jo6v1bos56d2j2hk63c58uiaalkilu81.apps.googleusercontent.com";
-                options.ClientSecret = "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";
+                options.ClientId = _config["Authentication:Google:ClientId"];
+                options.ClientSecret = _config["Authentication:Google:ClientSecret"];
 
-                //options.ClientId = _config["Authentication:Google:ClientId"];
-                //options.ClientSecret = _config["Authentication:Google:ClientSecret"];
+                //options.ClientId = "280608216916-jo6v1bos56d2j2hk63c58uiaalkilu81.apps.googleusercontent.com";
+                //options.ClientSecret = "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";
 
             })
             .AddFacebook(options =>
             {
-                options.AppId = "747857913107329";
-                options.AppSecret = "83615f5b8c08b9bedb59488191587904";
+                options.AppId = _config["Authentication:Facebook:AppId"];
+                options.AppSecret = _config["Authentication:Facebook:AppSecret"];
+
+                //options.AppId = "747857913107329";
+                //options.AppSecret = "83615f5b8c08b9bedb59488191587904";
 
             });
-
-            // Since we will be calling Web API from JavaScript so we will have to deal with “same-origin policy” problem
-            // for file upload progress bar
-            //services.AddCors();
-            //services.AddControllersWithViews();
 
             // To completely remove the file upload limit set this property to null
             // https://www.webdavsystem.com/server/documentation/large_files_iis_asp_net/

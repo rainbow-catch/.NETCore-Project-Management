@@ -3,7 +3,7 @@
 }
 
 <h1>Path: /</h1>
-@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admins"))
 {
     <a class="btn btn-primary" asp-action="UploadFiles" asp-route-path="/">Upload</a>
 }

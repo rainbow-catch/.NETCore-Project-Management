@@ -36,8 +36,8 @@ namespace DataRoom.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var project = await _context.Project.FirstOrDefaultAsync(m => m.Id == id);
+            
             if (project == null)
             {
                 return NotFound();
@@ -49,7 +49,7 @@ namespace DataRoom.Controllers
         // GET: Projects/Create
         public async Task<IActionResult> Create()
         {
-            var usersWithPermission = await _userManager.GetUsersInRoleAsync("Owner");
+            var usersWithPermission = await _userManager.GetUsersInRoleAsync("Owners");
 
             // Then get a list of the ids of these users
             var idsWithPermission = usersWithPermission.Select(u => u.Id);
@@ -58,6 +58,7 @@ namespace DataRoom.Controllers
             var users = _context.Users.Where(u => idsWithPermission.Contains(u.Id)).ToListAsync();
 
             ViewBag.owners = users.Result;
+            
             return View();
         }
 
@@ -66,7 +67,7 @@ namespace DataRoom.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,OwnerId")] Project project)
+        public async Task<IActionResult> Create([Bind("Name,OwnerId")] Project project) // What this Bind("Name,OwnerId") do?
         {
             if (ModelState.IsValid)
             {
@@ -75,12 +76,16 @@ namespace DataRoom.Controllers
                     Name = project.Name,
                     OwnerId = project.OwnerId
                 };
+                
                 _context.Add(newProject);
+                
                 await _context.SaveChangesAsync();
+                
                 System.IO.Directory.CreateDirectory("Upload/" + project.Name);
 
                 return RedirectToAction(nameof(Index));
             }
+                        
             return View(project);
         }
 
@@ -109,11 +114,12 @@ namespace DataRoom.Controllers
                 ProjectBidders = _context.BidderProjects.Where(b => b.ProjectId == id).Select(p => p.BidderId).ToList()
             };
 
-            var owerns = await _userManager.GetUsersInRoleAsync("Owner");
-            var bidders = await _userManager.GetUsersInRoleAsync("Bidder");
+            var owerns = await _userManager.GetUsersInRoleAsync("Owners");
+            var bidders = await _userManager.GetUsersInRoleAsync("Bidders");
 
             ViewBag.owners = owerns;
             ViewBag.bidders = bidders;
+            
             return View(model);
         }
 
@@ -129,6 +135,7 @@ namespace DataRoom.Controllers
             if (project == null)
             {
                 ViewBag.ErrorMessage = $"Project with Id = {model.Id} cannot be found";
+                
                 return View("NotFound");
             }
             else
@@ -143,7 +150,9 @@ namespace DataRoom.Controllers
                     if (!model.ProjectBidders.Contains(item.BidderId))
                     {
                         _context.BidderProjects.Remove(item);
+                        
                         var bidder = _userManager.FindByIdAsync(item.BidderId).Result.UserName;
+                        
                         System.IO.Directory.Delete("Upload/" + project.Name + "/" + bidder, true);
                     }
                 }
@@ -151,7 +160,9 @@ namespace DataRoom.Controllers
                 foreach (var item in model.ProjectBidders)
                 {
                     if (item == null) continue;
+                    
                     var oldbidderIds = oldbidders.Select(b => b.BidderId).ToList();
+                    
                     if (!oldbidderIds.Contains(item))
                     {
                         _context.BidderProjects.Add(new BidderProject
@@ -159,7 +170,9 @@ namespace DataRoom.Controllers
                             BidderId = item,
                             ProjectId = model.Id
                         });
+                        
                         var bidder = _userManager.FindByIdAsync(item).Result.UserName;
+                        
                         System.IO.Directory.CreateDirectory("Upload/" + project.Name + "/" + bidder);
                     }
                 }
@@ -178,8 +191,8 @@ namespace DataRoom.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Project
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var project = await _context.Project.FirstOrDefaultAsync(m => m.Id == id);
+            
             if (project == null)
             {
                 return NotFound();
@@ -194,14 +207,19 @@ namespace DataRoom.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var bidderProjects = _context.BidderProjects.Where(b => b.ProjectId == id).ToList();
+            
             foreach (var b in bidderProjects)
                 _context.BidderProjects.Remove(b);
 
             var project = await _context.Project.FindAsync(id);
+
             if (System.IO.Directory.Exists("Upload/" + project.Name))
                 System.IO.Directory.Delete("Upload/" + project.Name, true);
+            
             _context.Project.Remove(project);
+            
             await _context.SaveChangesAsync();
+            
             return RedirectToAction(nameof(Index));
         }
 

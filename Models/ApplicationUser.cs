@@ -8,10 +8,11 @@ namespace DataRoom.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        //public string CompanyName { get; set; }
-        //public string StreetAddress { get; set; }
-        //public string City { get; set; }
-        //public string Country { get; set; }
+        public string Name { get; set; }
+        public string CompanyName { get; set; }
+        public string StreetAddress { get; set; }
+        public string City { get; set; }
+        public string Country { get; set; }
         //public string Phone { get; set; }
         //public string CompanyDescription { get; set; }
 

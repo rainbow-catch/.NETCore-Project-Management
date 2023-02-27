@@ -5,16 +5,43 @@
 }
 
 <h1>User Registration</h1>
+<hr />
 
-<div class="row">
-    <div class="col-md-12">
-        <form method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
+<form method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row">
+        <div class="col-md-6">
+
             <div class="form-group">
                 <label asp-for="Name"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
-            </div>            
+            </div>
+            <div class="form-group">
+                <label asp-for="CompanyName"></label>
+                <input asp-for="CompanyName" class="form-control" />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StreetAddress"></label>
+                <input asp-for="StreetAddress" class="form-control" />
+                <span asp-validation-for="StreetAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="Country"></label>
+                <input asp-for="Country" class="form-control" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Email"></label>
                 <input asp-for="Email" class="form-control" />
@@ -30,24 +57,22 @@
                 <input asp-for="ConfirmPassword" class="form-control" />
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
-            <div class="form-group form-check-inline">
-                <input asp-for="IsOwner" class="form-check-input" />
-                <label asp-for="IsOwner" class="form-check-label"></label>
-            </div>
-            <br />
-            <div class="form-group arrowpopup">
-                @Html.CheckBoxFor(m => m.Agree) I have read and agree to the <a href="#" onclick="return showToolTip();">
-                    Terms and Conditions
-                </a>
-                <span class="tooltiptext" id="tooltipdemo">Confidentiality undertaking due to public procurement law restriction applicable to country context.</span>
-            </div>
-            <div>
-                <button type="submit" id="btnRegister" class="btn btn-primary" disabled="" style="width:auto">Register</button>
-            </div>
 
-        </form>
+        </div>
     </div>
-</div>
+    <br />
+    <div class="form-group arrowpopup">
+        @Html.CheckBoxFor(m => m.Agree) I have read and agree to the <a href="#" onclick="return showToolTip();">
+            Terms and Conditions
+        </a>
+        <span class="tooltiptext" id="tooltipdemo">Confidentiality undertaking due to public procurement law restriction applicable to country context.</span>
+    </div>
+    <div>
+        <button type="submit" id="btnRegister" class="btn btn-primary" disabled="" style="width:auto">Register</button>
+    </div>
+</form>
+
+
 
 @section Scripts {
     <script src="~/js/CustomScript.js"></script>

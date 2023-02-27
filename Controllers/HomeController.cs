@@ -1,4 +1,5 @@
 ﻿using DataRoom.Models;
+using DataRoom.Utilities;
 using DataRoom.ViewModels;
 using FileUploadDownload.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-
 namespace DataRoom.Controllers
 {
     public class HomeController : Controller
@@ -23,14 +23,17 @@ namespace DataRoom.Controllers
         private readonly AppDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private ApplicationUser _currentuser;
+        private readonly IEmailService _emailService = null;
 
         public HomeController(IEmployeeRepository employeeRepository,
-                              IHostEnvironment hostingEnvironment, AppDbContext context, UserManager<ApplicationUser> userManager)
+                              IHostEnvironment hostingEnvironment, AppDbContext context, 
+                              UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _employeeRepository = employeeRepository;
             _hostingEnvironment = hostingEnvironment;
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -41,21 +44,30 @@ namespace DataRoom.Controllers
         {
             // Get files from the server
             var model = new FilesViewModel();
+
             var directories = new List<String> { };
+            
             List<Project> projects = new List<Project> { };
+            
             _currentuser = _userManager.GetUserAsync(User).Result;
 
-            if (User.IsInRole("Admin"))
+            // List all projects
+            if (User.IsInRole("Admins"))
                 projects = _context.Project.ToList();
-            if(User.IsInRole("Owner"))
+
+            // List only project that project ownder belongs
+            if(User.IsInRole("Owners"))
             {
                 projects.AddRange(_context.Project.Where(p => p.OwnerId == _currentuser.Id).ToList());
             }
-            if (User.IsInRole("Bidder"))
+
+            // List only files/folders that bidder belongs
+            if (User.IsInRole("Bidders"))
             {
                 var bidderProject = _context.BidderProjects.Where(b=>b.BidderId==_currentuser.Id).Select(b => b.ProjectId).ToList();
                 projects.AddRange(_context.Project.Where(p => bidderProject.Contains(p.Id)).ToList());
             }
+
             foreach (var project in projects)
             {
                 model.Directories.Add(new DirectoryDetails
@@ -67,8 +79,11 @@ namespace DataRoom.Controllers
 
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload")))
             {
-                model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                model.Files.Add(new FileDetails 
+                { 
+                    Name = System.IO.Path.GetFileName(item), 
+                    Path = item 
+                });
             }
             
             return View(model);
@@ -84,18 +99,25 @@ namespace DataRoom.Controllers
             var model = new FilesViewModel();
             var directories = new List<String> { };
             var project = _context.Project.Where(p => p.Name == projectName).FirstOrDefault();
+
+            // First get all bidders of the project
             List<BidderProject> bidders = _context.BidderProjects.Where(b => b.ProjectId == project.Id).ToList();
 
             _currentuser = _userManager.GetUserAsync(User).Result;
 
-            if (User.IsInRole("Bidder"))
+            // If user role is Bidders then filter bidders, then add bidder's directory to model
+            if (User.IsInRole("Bidders"))
             {
                 bidders = bidders.Where(b => b.BidderId == _currentuser.Id).ToList();
             }
+
             if (bidders != null)
+
                 foreach (var b in bidders)
                 {
                     var bidder = _context.Users.Where(u => u.Id == b.BidderId).First().UserName;
+
+                    // Creates bidder folder as its username in upload folder for example sthay
                     model.Directories.Add(new DirectoryDetails
                     {
                         Name = bidder,
@@ -103,11 +125,15 @@ namespace DataRoom.Controllers
                     });
                 }
 
+            // Lists files belong to project folder
             foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload/" + projectName)))
             {
-                model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                model.Files.Add(new FileDetails 
+                { 
+                    Name = System.IO.Path.GetFileName(item), Path = item 
+                });
             }
+            
             ViewBag.projectName = projectName;
 
             return View(model);
@@ -123,16 +149,21 @@ namespace DataRoom.Controllers
             var model = new FilesViewModel();
 
             _currentuser = _userManager.GetUserAsync(User).Result;
+
             var project = _context.Project.Where(p => p.Name == projectName).FirstOrDefault();
 
-            foreach (var item in Directory.GetFiles(
-                Path.Combine(Directory.GetCurrentDirectory(), "upload/" + projectName + "/" + bidderName)))
+            foreach (var item in Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "upload/" + projectName + "/" + bidderName)))
             {
-                model.Files.Add(
-                    new FileDetails { Name = System.IO.Path.GetFileName(item), Path = item });
+                model.Files.Add(new FileDetails 
+                { 
+                    Name = System.IO.Path.GetFileName(item), 
+                    Path = item 
+                });
             }
+
             ViewBag.projectName = projectName;
             ViewBag.bidderName = bidderName;
+            
             return View(model);
         }
 
@@ -157,11 +188,13 @@ namespace DataRoom.Controllers
 
                 // Gets file path to be uploaded
                 var filePath = Path.Combine(Directory.GetCurrentDirectory(), path, fileName);
+                
                 if(GetContentType(filePath)==null)
                 {
                     illegalFiles.Add(fileName);
                     continue;
                 }
+                
                 // Checks If file with same name exists and delete it
                 if (System.IO.File.Exists(filePath))
                 {
@@ -176,19 +209,30 @@ namespace DataRoom.Controllers
                     uploadedFile.CopyTo(localFile);
                 }
             }
-            
-            ViewBag.Message = "Files are successfully uploaded";
 
+            ViewBag.Message = "Files are successfully uploaded";
+            return Json(new { status = "success" });
+
+            /*
+            // Notify bidders about newly upladed files by the project owner
             var projectName = path.Split("//")[1];
             var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
             var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
             var projectLink = this.Url.Action("project", "Home", new { projectName = projectName });
-            EmailHelper emailHelper = new EmailHelper();
-            var failedResponse = new List<String>{ };
+            
+            //EmailHelper emailHelper = new EmailHelper();
+            
+            var failedResponse = new List<String> { };
+
+            string subjectLine = "New project file(s) uploaded by project owner";
+            
             foreach (var bidder in bidders)
             {
-                var response = emailHelper.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
-            Request.Host, projectLink));
+                //var response = _emailService.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
+                //    Request.Host, projectLink));
+
+                var response = _emailService.SendEmail(bidder.Email, subjectLine, projectLink);
+
                 if (!response)
                     failedResponse.Add(bidder.UserName);
             }
@@ -197,6 +241,8 @@ namespace DataRoom.Controllers
                 return Json(new { status = "success" });
             else
                 return Json(new { status = "failed", failedFiles = illegalFiles, failedEmails = failedResponse });
+
+            */
         }
 
         // Downloads file from the server
@@ -224,9 +270,13 @@ namespace DataRoom.Controllers
         {
             var types = GetMimeTypes();
             var ext = Path.GetExtension(path).ToLowerInvariant();
+            
             if (types.ContainsKey(ext))
+                
                 return types[ext];
+            
             else
+                
                 return null;
         }
 
@@ -245,8 +295,11 @@ namespace DataRoom.Controllers
                         {".jpg", "image/jpeg"},
                         {".jpeg", "image/jpeg"},
                         {".gif", "image/gif"},
-                        {".csv", "text/csv"}
-                    };
+                        {".csv", "text/csv"},
+                        {".zip", "application/zip"},
+                        {".rar", "application/x-rar"}
+
+                      };
         }
 
         public ViewResult GetAllEmployees()

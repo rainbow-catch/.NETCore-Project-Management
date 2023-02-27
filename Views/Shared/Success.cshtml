@@ -1,4 +1,4 @@
-﻿@if (ViewBag.ErrorTitle == null)
+﻿@if (ViewBag.SuccessTitle == null)
 {
     <h3>
         An error occured while processing your request.
@@ -8,6 +8,6 @@
 }
 else
 {
-    <h1 class="table-danger">@ViewBag.ErrorTitle</h1>
-    <h6 class="text-danger">@ViewBag.ErrorMessage</h6>
+    <h1 class="text-success">@ViewBag.SuccessTitle</h1>
+    <h6 class="text-success">@ViewBag.SuccessMessage</h6>
 }

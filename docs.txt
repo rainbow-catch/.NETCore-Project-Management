@@ -1,0 +1,31 @@
+﻿Application Url:
+https://dr.mof.gov.tl
+
+Google:
+7-Jun-2002
+username: mof.ifmisu@gmail.com
+password: P@ssw0rd2023
+https://console.developers.google.com
+
+Your Client ID:
+280608216916-jo6v1bos56d2j2hk63c58uiaalkilu81.apps.googleusercontent.com
+
+Your Client Secret:
+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
+
+dotnet user-secrets set "Authentication:Google:ClientId" "280608216916-jo6v1bos56d2j2hk63c58uiaalkilu81.apps.googleusercontent.com"
+dotnet user-secrets set "Authentication:Google:ClientSecret" "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"
+
+--
+Facebook:
+https://developers.facebook.com
+AppId:
+747857913107329
+
+AppSecret:
+83615f5b8c08b9bedb59488191587904
+
+--
+Email credential:
+dataroom@mof.gov.tl
+drAt@2023
