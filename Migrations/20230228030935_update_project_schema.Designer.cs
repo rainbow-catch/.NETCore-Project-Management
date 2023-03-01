@@ -4,14 +4,16 @@ using DataRoom;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataRoom.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230228030935_update_project_schema")]
+    partial class update_project_schema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,7 +110,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "724506fa-69c3-47e9-99b6-3c25f59a8372",
+                            ConcurrencyStamp = "9b3ed7d8-dbd1-47f1-b428-d7da627509c9",
                             Country = "Timor-Leste",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
@@ -117,10 +119,10 @@ namespace DataRoom.Migrations
                             Name = "Admin",
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEN+PJTVY/FGzvLZO9n/pSaiswiE/yUKCNzgOynuSoCjiK8VQXZhoTw7pQ3i7zzrWzw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEDj13HOQNLWtq4h3szvfb9HO7eFlfbq8om+wMaPUWq/MlpuvWUuS/5eI0QMjsp13jw==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3135a4d6-a7f1-4689-a0e7-3c359f9c6e1d",
+                            SecurityStamp = "4674de22-6977-46c1-9ed4-a40ef238dba8",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "admin"
@@ -131,7 +133,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "7d200ab9-e940-4238-96df-02204245ba77",
+                            ConcurrencyStamp = "b10bfffe-5741-4b19-8fc0-9dc16b8f8ec9",
                             Country = "Timor-Leste",
                             Email = "owner1@email.com",
                             EmailConfirmed = true,
@@ -140,10 +142,10 @@ namespace DataRoom.Migrations
                             Name = "Project Owner1",
                             NormalizedEmail = "OWNER1@EMAIL.COM",
                             NormalizedUserName = "OWNER1",
-                            PasswordHash = "AQAAAAEAACcQAAAAEPlcjiraDj9B9lo6uNMql7n5QNd3C0aERLB2WGQiqCJkMgVaQEJ+w3F1GsH6mIQ2Ew==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEN5zubBRUxhKNNJW3leChx5Qx4Oa3O/U5lvudHdxa+fPVayS1c3cSu7T1RsnoS8f6g==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ac437afa-1277-45a8-9ea1-11e6af0fecc8",
+                            SecurityStamp = "d890b020-d722-4ae6-8bd9-8f81cd96e85a",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "owner1"
@@ -154,7 +156,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "0f21381b-e12b-4d0b-adbe-d285369647db",
+                            ConcurrencyStamp = "1f7066b1-307f-44a8-93c2-ca331e701563",
                             Country = "Timor-Leste",
                             Email = "owner2@email.com",
                             EmailConfirmed = true,
@@ -163,10 +165,10 @@ namespace DataRoom.Migrations
                             Name = "Project Owner2",
                             NormalizedEmail = "OWNER2@EMAIL.COM",
                             NormalizedUserName = "OWNER2",
-                            PasswordHash = "AQAAAAEAACcQAAAAEOgrZqQ9rLdmQ233cyo/GdvN9Vr/XSWRapEdbIG+wWNLNKDWo9U9BgzZDVh9hEdzZw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAkQDtbKOddM8r4I+Fh2VEugxagAl2E5pFpnEgyvhbLZPzkz80ICW+U7DA69PIuwhA==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5cc92178-963f-44a7-8514-4255745d4b7c",
+                            SecurityStamp = "51e822df-cc61-47ca-bc05-9988f426416a",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "owner2"
@@ -177,7 +179,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "a2617355-10be-4ffe-b4ae-15ef0b20e41d",
+                            ConcurrencyStamp = "db5b7f53-982d-4676-97f0-5f7ab21475cc",
                             Country = "Timor-Leste",
                             Email = "bidder1@email.com",
                             EmailConfirmed = true,
@@ -186,10 +188,10 @@ namespace DataRoom.Migrations
                             Name = "Bidder1",
                             NormalizedEmail = "BIDDER1@EMAIL.COM",
                             NormalizedUserName = "BIDDER1",
-                            PasswordHash = "AQAAAAEAACcQAAAAELZgDGzZi+2WkGEKsWbctO2jYF5W9KMWd24o7paBId0JIP8Jh6log7ekztId5XOrVA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMjAl4S8IMqUjMot73sdpiD10A6J/rtVjfEygQADLTr1e6Tsd7zd7WX3J19e51U30w==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "31cc2702-577c-4eea-ac43-cd3c53a29f3a",
+                            SecurityStamp = "6ed8a3a4-5413-47f3-87cc-3c5ae1aff96b",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "bidder1"
@@ -200,7 +202,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "1fbeda75-045e-4821-ba1a-033a95ef3199",
+                            ConcurrencyStamp = "5d4d9b78-0e41-4f14-a178-6e2bb5248e8d",
                             Country = "Timor-Leste",
                             Email = "bidder2@email.com",
                             EmailConfirmed = true,
@@ -209,10 +211,10 @@ namespace DataRoom.Migrations
                             Name = "Bidder2",
                             NormalizedEmail = "BIDDER2@EMAIL.COM",
                             NormalizedUserName = "BIDDER2",
-                            PasswordHash = "AQAAAAEAACcQAAAAEKCFDPkAQZ7C9vBFrQA3/QUaoqK2bv11WPxxKxPJ6RTmZi0onEP1BSo0FG68cuFrKg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELQ7MRu7a/tGnW4koe5q2rNuOCV60yk0/TKdfKH2mG7+6gry1krK7cPxODQEvev5Qg==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ca6aea69-7a3d-4359-95e6-1235eda1b79e",
+                            SecurityStamp = "0d2d4dcd-88d7-4fda-8a77-e88d493ba039",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "bidder2"
@@ -223,7 +225,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "a9d2a50d-5861-478a-9d1f-94e0e68356c7",
+                            ConcurrencyStamp = "3ac3befb-34cf-433a-ad4e-6bed82517f6c",
                             Country = "Timor-Leste",
                             Email = "bidder3@email.com",
                             EmailConfirmed = true,
@@ -232,10 +234,10 @@ namespace DataRoom.Migrations
                             Name = "Bidder3",
                             NormalizedEmail = "BIDDER3@EMAIL.COM",
                             NormalizedUserName = "BIDDER3",
-                            PasswordHash = "AQAAAAEAACcQAAAAEBR7JkSMQ3Bds/6v7Ia7z83jmkdXUS4WJJgHXW2aT6y53ceWInGLY3s3jwsA7BFDow==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECiq4KBYQmTSN5OZkJuazeDWOkJneLlraH5jwY6K1ydVt57QehAH/Z78efWMyrlzhg==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "122325b4-658a-4223-85ec-b89aaee90df5",
+                            SecurityStamp = "6d1a6a09-b862-43aa-be47-18cf486887fb",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "bidder3"
@@ -246,7 +248,7 @@ namespace DataRoom.Migrations
                             AccessFailedCount = 0,
                             City = "Dili",
                             CompanyName = "Ministry of Finance",
-                            ConcurrencyStamp = "a37182b6-5495-4bf7-ae47-ec992cbd28eb",
+                            ConcurrencyStamp = "809e59d3-f075-4ff7-97af-5dfb63d8e066",
                             Country = "Timor-Leste",
                             Email = "bidder4@email.com",
                             EmailConfirmed = true,
@@ -255,10 +257,10 @@ namespace DataRoom.Migrations
                             Name = "Bidder4",
                             NormalizedEmail = "BIDDER4@EMAIL.COM",
                             NormalizedUserName = "BIDDER4",
-                            PasswordHash = "AQAAAAEAACcQAAAAEIafEDL9aSkcuTl0QC6Zv7CasV+sHkIz7umQyA2AJVFst7QdydIQonaOtajU/+wRBQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEO6ALbdrq5ZmpUIKWLw/oaFPHaYT7N0FsQsT27vT8JaNqPWGmgwtmH6MIZYzQzIIBw==",
                             PhoneNumber = "123456789",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5b303728-cf5b-47a5-8e10-86fcee85c222",
+                            SecurityStamp = "2d68b8c3-903d-440e-96fa-bad5d4f85430",
                             StreetAddress = "Main Street",
                             TwoFactorEnabled = false,
                             UserName = "bidder4"
@@ -328,9 +330,6 @@ namespace DataRoom.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -379,21 +378,21 @@ namespace DataRoom.Migrations
                         new
                         {
                             Id = "2c5e174e-3b0e-446f-86af-483d56fd7210",
-                            ConcurrencyStamp = "49204648-d4d5-4e65-9b2e-515f59b0bb96",
+                            ConcurrencyStamp = "b50658cc-537a-47ab-9006-c5005f419e85",
                             Name = "Admins",
                             NormalizedName = "ADMINS"
                         },
                         new
                         {
                             Id = "2c5e174e-3b0e-446f-86af-483d56fd7211",
-                            ConcurrencyStamp = "e2840944-80d2-4b77-b3df-2d503ae94b08",
+                            ConcurrencyStamp = "1dda4b4b-9118-4ef8-bf2a-b6ddb102d66e",
                             Name = "Owners",
                             NormalizedName = "OWNERS"
                         },
                         new
                         {
                             Id = "2c5e174e-3b0e-446f-86af-483d56fd7212",
-                            ConcurrencyStamp = "f8a9c126-db9b-443f-9ba0-6d2e6f97f8c1",
+                            ConcurrencyStamp = "cabb6de2-bf09-4e4d-b653-7ecbf56784e4",
                             Name = "Bidders",
                             NormalizedName = "BIDDERS"
                         });

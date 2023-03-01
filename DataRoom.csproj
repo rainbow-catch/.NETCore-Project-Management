@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Upload\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>

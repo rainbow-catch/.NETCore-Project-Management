@@ -74,7 +74,10 @@ namespace DataRoom.Controllers
                 Project newProject = new Project
                 {
                     Name = project.Name,
-                    OwnerId = project.OwnerId
+                    OwnerId = project.OwnerId,
+                    StartDate = project.StartDate,
+                    EndDate = project.EndDate,
+                    IsActive = project.IsActive
                 };
                 
                 _context.Add(newProject);
@@ -110,7 +113,10 @@ namespace DataRoom.Controllers
             {
                 Id = project.Id,
                 Name = project.Name,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
                 OwnerId = project.OwnerId,
+                IsActive = project.IsActive,
                 ProjectBidders = _context.BidderProjects.Where(b => b.ProjectId == id).Select(p => p.BidderId).ToList()
             };
 
@@ -142,6 +148,9 @@ namespace DataRoom.Controllers
             {
                 project.Name = model.Name;
                 project.OwnerId = model.OwnerId;
+                project.StartDate = model.StartDate;
+                project.EndDate = model.EndDate;
+                project.IsActive = model.IsActive;
 
                 var oldbidders = _context.BidderProjects.Where(b => b.ProjectId == model.Id).ToList();
 
