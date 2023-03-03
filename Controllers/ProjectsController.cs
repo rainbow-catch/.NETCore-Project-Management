@@ -67,29 +67,29 @@ namespace DataRoom.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,OwnerId")] Project project) // What this Bind("Name,OwnerId") do?
+        public async Task<IActionResult> Create(EditProjectViewModel model)
         {
             if (ModelState.IsValid)
             {
                 Project newProject = new Project
                 {
-                    Name = project.Name,
-                    OwnerId = project.OwnerId,
-                    StartDate = project.StartDate,
-                    EndDate = project.EndDate,
-                    IsActive = project.IsActive
+                    Name = model.Name,
+                    OwnerId = model.OwnerId,
+                    StartDate = model.StartDate,
+                    EndDate = model.EndDate,
+                    IsActive = model.IsActive
                 };
                 
                 _context.Add(newProject);
                 
                 await _context.SaveChangesAsync();
                 
-                System.IO.Directory.CreateDirectory("Upload/" + project.Name);
+                System.IO.Directory.CreateDirectory("Upload/" + model.Name);
 
                 return RedirectToAction(nameof(Index));
             }
                         
-            return View(project);
+            return View(model);
         }
 
         // GET: Projects/Edit/5
@@ -134,14 +134,14 @@ namespace DataRoom.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EditProjectViewModel model)
+        public IActionResult Edit(EditProjectViewModel model)
         {
             var project = _context.Project.Where(p => p.Id == model.Id).First();
 
             if (project == null)
             {
                 ViewBag.ErrorMessage = $"Project with Id = {model.Id} cannot be found";
-                
+
                 return View("NotFound");
             }
             else
@@ -159,9 +159,9 @@ namespace DataRoom.Controllers
                     if (!model.ProjectBidders.Contains(item.BidderId))
                     {
                         _context.BidderProjects.Remove(item);
-                        
+
                         var bidder = _userManager.FindByIdAsync(item.BidderId).Result.UserName;
-                        
+
                         System.IO.Directory.Delete("Upload/" + project.Name + "/" + bidder, true);
                     }
                 }
@@ -169,9 +169,9 @@ namespace DataRoom.Controllers
                 foreach (var item in model.ProjectBidders)
                 {
                     if (item == null) continue;
-                    
+
                     var oldbidderIds = oldbidders.Select(b => b.BidderId).ToList();
-                    
+
                     if (!oldbidderIds.Contains(item))
                     {
                         _context.BidderProjects.Add(new BidderProject
@@ -179,9 +179,9 @@ namespace DataRoom.Controllers
                             BidderId = item,
                             ProjectId = model.Id
                         });
-                        
+
                         var bidder = _userManager.FindByIdAsync(item).Result.UserName;
-                        
+
                         System.IO.Directory.CreateDirectory("Upload/" + project.Name + "/" + bidder);
                     }
                 }

@@ -19,6 +19,7 @@ namespace DataRoom.Models
 
         [ForeignKey("OwnerId")]
         public string OwnerId { get; set; }
+        public virtual ApplicationUser Owner { get; set; }
         public List<BidderProject> ProjectBidders { get; set; }
     }
 }

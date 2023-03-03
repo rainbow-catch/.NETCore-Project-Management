@@ -28,12 +28,13 @@ namespace DataRoom.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         private readonly IEmailService _emailService = null;
+        private readonly AppDbContext _context;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<AccountController> logger,
             IWebHostEnvironment webHostEnvironment,
-            IEmailService emailService
+            IEmailService emailService, AppDbContext context
             )
         {
             this.userManager = userManager;
@@ -41,6 +42,7 @@ namespace DataRoom.Controllers
             this.logger = logger;
             _webHostEnvironment = webHostEnvironment;
             _emailService = emailService;
+            _context = context;
 
             //userManager.UserValidators = new UserValidator(userManager) { AllowOnlyAlphanumericUserNames = false };
         }
@@ -406,6 +408,18 @@ namespace DataRoom.Controllers
                     //{
                     await userManager.AddToRoleAsync(user, "Bidders");
                     //}
+
+                    // Add registered use to active projects
+                    var activeProjects = _context.Project.Where(p => p.IsActive);
+                    foreach(var project in activeProjects)
+                    {
+                        _context.BidderProjects.Add(new BidderProject
+                        {
+                            BidderId = user.Id,
+                            ProjectId = project.Id
+                        });
+                        System.IO.Directory.CreateDirectory("Upload/" + project.Name + "/" + user.UserName);
+                    }
 
                     // Once a user has been successfully created in the system
                     // we need to send the user an email and request the user to confirm it
