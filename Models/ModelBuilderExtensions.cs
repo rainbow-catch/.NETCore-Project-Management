@@ -201,6 +201,8 @@ namespace DataRoom.Models
                 }
             );
 
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Owner);
             // Set foreign keys to implements many-to-many relationship between user model and project model
             modelBuilder.Entity<BidderProject>()
                 .HasOne(pt => pt.Bidder)

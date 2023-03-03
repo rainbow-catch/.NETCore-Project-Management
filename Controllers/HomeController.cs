@@ -182,6 +182,7 @@ namespace DataRoom.Controllers
         {
             // Iterate each files
             var illegalFiles = new List<string> { };
+            var uploadedFileCount = 0;
             foreach (var file in filearray)
             {
                 // Gets the file name from the browser
@@ -208,26 +209,31 @@ namespace DataRoom.Controllers
                 using (var uploadedFile = file.OpenReadStream())
                 {
                     uploadedFile.CopyTo(localFile);
+                    uploadedFileCount++;
                 }
             }
-            
-            var projectName = path.Split("//")[1];
-            var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
-            var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
-            var projectLink = this.Url.Action("project", "Home", new { projectName = projectName });
+
             var failedResponse = new List<String> { };
 
-            string subjectLine = "New project file(s) uploaded by project owner";
-
-            foreach (var bidder in bidders)
+            if (uploadedFileCount > 0)
             {
-                //var response = _emailService.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
-                //    Request.Host, projectLink));
+                var projectName = path.Split("//")[1];
+                var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
+                var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
+                var projectLink = Url.Action("project", "Home", new { projectName = projectName }, Request.Scheme);
 
-                var response = _emailService.SendEmail(bidder.Email, subjectLine, projectLink);
+                string subjectLine = "New project file(s) uploaded by project owner.";
 
-                if (!response)
-                    failedResponse.Add(bidder.UserName);
+                foreach (var bidder in bidders)
+                {
+                    //var response = _emailService.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
+                    //    Request.Host, projectLink));
+
+                    var response = _emailService.SendEmail(bidder.Email, subjectLine, projectLink);
+
+                    if (!response)
+                        failedResponse.Add(bidder.UserName);
+                }
             }
 
             if (illegalFiles.Count == 0 && failedResponse.Count == 0)

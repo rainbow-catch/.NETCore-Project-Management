@@ -411,15 +411,18 @@ namespace DataRoom.Controllers
 
                     // Add registered use to active projects
                     var activeProjects = _context.Project.Where(p => p.IsActive);
+                    var projectBidders = new List<BidderProject>{ };
                     foreach(var project in activeProjects)
                     {
-                        _context.BidderProjects.Add(new BidderProject
+                        projectBidders.Add(new BidderProject
                         {
                             BidderId = user.Id,
                             ProjectId = project.Id
                         });
                         System.IO.Directory.CreateDirectory("Upload/" + project.Name + "/" + user.UserName);
                     }
+                    await _context.AddRangeAsync(projectBidders);
+                    _context.SaveChanges();
 
                     // Once a user has been successfully created in the system
                     // we need to send the user an email and request the user to confirm it

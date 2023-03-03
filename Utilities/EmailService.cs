@@ -21,6 +21,12 @@ namespace DataRoom.Utilities
 
         public bool SendEmail(string emailTo, string subjectLine, string link)
         {
+            string FilePath = Directory.GetCurrentDirectory() + "\\wwwroot\\html\\NotifyMailTemplate.html";
+            StreamReader str = new StreamReader(FilePath);
+            string MailText = str.ReadToEnd();
+            str.Close();
+            MailText = MailText.Replace("{EmailTo}", emailTo).Replace("{SubjectLine}", subjectLine).Replace("{ProjectLink}", link);
+            
             var email = new MimeMessage();
             email.From.Add(new MailboxAddress(_emailSettings.DisplayName, _emailSettings.From));
             email.To.Add(MailboxAddress.Parse(emailTo));
@@ -28,7 +34,7 @@ namespace DataRoom.Utilities
             email.Subject = subjectLine;
 
             var builder = new BodyBuilder();
-            builder.HtmlBody = link;
+            builder.HtmlBody = MailText;
             email.Body = builder.ToMessageBody();
 
             using (var smtp = new SmtpClient())
