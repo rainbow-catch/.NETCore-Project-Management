@@ -217,23 +217,12 @@ namespace DataRoom.Controllers
 
             if (uploadedFileCount > 0)
             {
-                var projectName = path.Split("//")[1];
-                var projectId = _context.Project.Where(p => p.Name == projectName).First().Id;
-                var bidders = _context.BidderProjects.Where(b => b.ProjectId == projectId).Select(b => b.Bidder).ToList();
-                var projectLink = Url.Action("project", "Home", new { projectName = projectName }, Request.Scheme);
-
-                string subjectLine = "New project file(s) uploaded by project owner.";
-
-                foreach (var bidder in bidders)
-                {
-                    //var response = _emailService.SendEmailNotifyBidders(bidder.Email, string.Format("{0}://{1}{2}", Request.Scheme,
-                    //    Request.Host, projectLink));
-
-                    var response = _emailService.SendEmail(bidder.Email, subjectLine, projectLink);
-
-                    if (!response)
-                        failedResponse.Add(bidder.UserName);
-                }
+                var projectName = path.Split("/")[1];
+                var project = _context.Project.Where(p => p.Name == projectName).First();
+                if(User.IsInRole("Owners"))
+                    failedResponse = sendEmailToBidders(project);
+                if(User.IsInRole("Bidders"))
+                    failedResponse = sendEmailToOwner(project);
             }
 
             if (illegalFiles.Count == 0 && failedResponse.Count == 0)
@@ -244,6 +233,39 @@ namespace DataRoom.Controllers
             else
                 return Json(new { status = "failed", failedFiles = illegalFiles, failedEmails = failedResponse });
 
+        }
+
+        private List<string> sendEmailToOwner(Project project)
+        {
+            var owner = _context.Users.Where(u => u.Id == project.OwnerId).FirstOrDefault();
+            var projectLink = Url.Action("project", "Home", new { projectName = project.Name }, Request.Scheme);
+            var res = new List<String>();
+
+            string subjectLine = $"{User.Identity.Name} uploaded project file(s) to your project({project.Name}).";
+            
+            var response = _emailService.SendEmail(owner.Email, subjectLine, projectLink);
+
+            if (!response)
+                res.Add(owner.UserName);
+            return res;
+        }
+
+        private List<string> sendEmailToBidders(Project project)
+        {
+            var bidders = _context.BidderProjects.Where(b => b.ProjectId == project.Id).Select(b => b.Bidder).ToList();
+            var projectLink = Url.Action("project", "Home", new { projectName = project.Name }, Request.Scheme);
+            var res = new List<String>();
+
+            string subjectLine = "New project file(s) uploaded by project owner.";
+
+            foreach (var bidder in bidders)
+            {
+                var response = _emailService.SendEmail(bidder.Email, subjectLine, projectLink);
+
+                if (!response)
+                    res.Add(bidder.UserName);
+            }
+            return res;
         }
 
         // Downloads file from the server

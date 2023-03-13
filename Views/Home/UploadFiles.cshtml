@@ -50,7 +50,7 @@
                 data.append('filearray', files[i]);
                 data.append('filesize', files[i].size);
             }
-            data.append('path', "upload/@ViewBag.path");
+            data.append('path', "upload" +"@ViewBag.path");
 
 
             $.ajax({

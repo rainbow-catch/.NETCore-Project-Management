@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataRoom.Migrations
 {
-    public partial class initdb : Migration
+    public partial class updatedb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -42,6 +42,10 @@ namespace DataRoom.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -176,15 +180,17 @@ namespace DataRoom.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Project", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Project_Users_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_Project_Users_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -217,38 +223,27 @@ namespace DataRoom.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Employees",
-                columns: new[] { "Id", "Department", "Email", "Name", "PhotoPath" },
-                values: new object[,]
-                {
-                    { 1, 3, "sothun.thay@icloud.com", "Sothun Thay", null },
-                    { 2, 1, "sreyneth.khorn@icloud.com", "Sreyneth Khorn", null },
-                    { 3, 0, "nisa.thay@icloud.com", "Nisa Thay", null },
-                    { 4, 0, "bosba.sthay@icloud.com", "Bosba Thay", null }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Roles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2c5e174e-3b0e-446f-86af-483d56fd7210", "8fd82ec0-7129-478b-9a11-251df8aafc51", "Admin", "ADMIN" },
-                    { "2c5e174e-3b0e-446f-86af-483d56fd7211", "285ba163-9b0b-496e-8801-46cea158b0fd", "Owner", "OWNER" },
-                    { "2c5e174e-3b0e-446f-86af-483d56fd7212", "d938d0da-f3bf-4ad9-a093-6e79293a4f71", "Bidder", "BIDDER" }
+                    { "2c5e174e-3b0e-446f-86af-483d56fd7210", "960379ef-d0ff-416e-96f5-abc3dc013eaf", "Admins", "ADMINS" },
+                    { "2c5e174e-3b0e-446f-86af-483d56fd7211", "903636c1-6825-49df-80b2-020c7b6eadff", "Owners", "OWNERS" },
+                    { "2c5e174e-3b0e-446f-86af-483d56fd7212", "d10e52c5-2bae-4ee6-9c5e-ff548e997b23", "Bidders", "BIDDERS" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AccessFailedCount", "CompanyName", "ConcurrencyStamp", "Email", "EmailConfirmed", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                columns: new[] { "Id", "AccessFailedCount", "City", "CompanyName", "ConcurrencyStamp", "Country", "Email", "EmailConfirmed", "LastName", "LockoutEnabled", "LockoutEnd", "Name", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "StreetAddress", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "8e445865-a24d-4543-a6c6-9443d048cdb9", 0, "", "734a0e89-284a-4852-b29a-b775eec7920f", "admin@email.com", true, "admin", false, null, "ADMIN@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEAQRwkJWAM4SiMvCHnjcWy6AqvoG3v7+D4D8ACsfVS5ZFtf6KPFPXeMfCWovF3onYQ==", "123456789", false, "dc919890-4d25-45ee-b552-30ad980c3b72", false, "admin" },
-                    { "8e445865-a24d-4543-a6c6-9443d048cdba", 0, "owner company", "72514fba-ebea-4095-b3bf-463e5cfaa5e5", "owner1@email.com", true, "owner1", false, null, "OWNER1@EMAIL.COM", "OWNER1", "AQAAAAEAACcQAAAAENN15g5Gfk7eOM10IxRM9u/fNcuCNIzcKGM4kBF8lLtqJYDsjCny4+V1wn+nE1jvZg==", "123456789", false, "5f41d3f4-cbf9-410e-8170-d1ed9a83a546", false, "owner1" },
-                    { "8e445865-a24d-4543-a6c6-9443d048cdbb", 0, " company", "97d3e745-6afd-4fb4-ba81-7a681086e922", "owner2@email.com", true, "owner2", false, null, "OWNER2@EMAIL.COM", "OWNER2", "AQAAAAEAACcQAAAAEAXuFtRYBDA/yyOKVVaHVleLlNywtkg+JIJ440u/9wSIpniht91IXZHENagYbJou2g==", "123456789", false, "42b1e679-833a-45d3-b2dd-9008d4001b99", false, "owner2" },
-                    { "8e445865-a24d-4543-a6c6-9443d048cdbc", 0, "bidder company", "226ed194-ba9b-4e36-ac31-81b28cf61b7a", "bidder1@email.com", true, "bidder1", false, null, "BIDDER1@EMAIL.COM", "BIDDER1", "AQAAAAEAACcQAAAAEHd4NcwNvWqybUF7Kk+90eUGYCrbeQE1zihq7PvBp5QciYmALp5SCCRpAIYNKvda7w==", "123456789", false, "0c86d8da-68ca-4c14-9420-9ea906992e6f", false, "bidder1" },
-                    { "8e445865-a24d-4543-a6c6-9443d048cdbd", 0, "bidder company", "6889bbeb-4cec-4bef-899d-9ee506a1f379", "bidder2@email.com", true, "bidder2", false, null, "BIDDER2@EMAIL.COM", "BIDDER2", "AQAAAAEAACcQAAAAEO79AFqzfWp3+j/SQDdev83Rg8QAxLapsXEM4/TUiNIYLoklb9IufnIX31USv8y/fg==", "123456789", false, "7a551a7a-1857-414d-aada-e4e6711afb76", false, "bidder2" },
-                    { "8e445865-a24d-4543-a6c6-9443d048cdbe", 0, "bidder company", "99c2fcfb-3c25-468a-add2-084729ef9cb7", "bidder3@email.com", true, "bidder3", false, null, "BIDDER3@EMAIL.COM", "BIDDER3", "AQAAAAEAACcQAAAAEF1tIs8UOvL8eZOuF31+3Ed/tLY76/VysW3++9bVHoG3RS3Imsib/LkeIj6Vutnm7A==", "123456789", false, "a9ce6d5f-cb71-414b-a0df-6ba8cc252dde", false, "bidder3" },
-                    { "8e445865-a24d-4543-a6c6-9443d048cdbf", 0, "bidder company", "37fa0825-d094-478b-afb5-aaf4791ccb7f", "bidder4@email.com", true, "bidder4", false, null, "BIDDER4@EMAIL.COM", "BIDDER4", "AQAAAAEAACcQAAAAELwmPIgjA15n4ojsGqHWJrpT4SD86eorgx0fFMNaSRNciN+3SoR+wewO2rYDv7mHPQ==", "123456789", false, "1525b14b-9154-47ec-b68a-3d2a1a25641d", false, "bidder4" }
+                    { "8e445865-a24d-4543-a6c6-9443d048cdb9", 0, "Dili", "Ministry of Finance", "f0f0fd86-d2ed-4237-966d-a3039bccb16d", "Timor-Leste", "admin@email.com", true, "admin", false, null, "Admin", "ADMIN@EMAIL.COM", "ADMIN", "AQAAAAEAACcQAAAAEAgk5kXKwpmyCS1mAYVUnYJb+Hy9b+8nwIKDmVld+b3mKZfKP1Hbz8xToU9TLwTQRg==", "123456789", false, "c942a0c6-3670-4e79-a7ef-3f20505f517f", "Main Street", false, "admin" },
+                    { "8e445865-a24d-4543-a6c6-9443d048cdba", 0, "Dili", "Ministry of Finance", "d825f98e-4cc8-4f85-b61f-4e300e0ced30", "Timor-Leste", "owner1@email.com", true, "owner1", false, null, "Project Owner1", "OWNER1@EMAIL.COM", "OWNER1", "AQAAAAEAACcQAAAAEEPPG3l0TNTcWFzrUQepFoysnvlbMOUXe33Gd3mIf9n0hoXYnhsz9l7DksxnBK7fxg==", "123456789", false, "84adfdeb-9b93-46b2-b4f8-9fd4cf1092a6", "Main Street", false, "owner1" },
+                    { "8e445865-a24d-4543-a6c6-9443d048cdbb", 0, "Dili", "Ministry of Finance", "010bd0f1-7747-44d2-b01e-2ed5c7a77604", "Timor-Leste", "owner2@email.com", true, "owner2", false, null, "Project Owner2", "OWNER2@EMAIL.COM", "OWNER2", "AQAAAAEAACcQAAAAEDPyHEexQTqa7AaL6SGw3BGKuYLvcxYn8y0GH0MeEnSCXQfOaxFI2vRtheXZBanpzQ==", "123456789", false, "484263fb-badc-439a-a5a5-e2b5a68e45bc", "Main Street", false, "owner2" },
+                    { "8e445865-a24d-4543-a6c6-9443d048cdbc", 0, "Dili", "Ministry of Finance", "1b57304e-6ebe-4184-99c8-e815b7bcb905", "Timor-Leste", "bidder1@email.com", true, "bidder1", false, null, "Bidder1", "BIDDER1@EMAIL.COM", "BIDDER1", "AQAAAAEAACcQAAAAELy7kooxdc7upJZo0l53ubfyfM+RE1cVxBkQanEDR96ZXAij7G3EIWoO383qPqrWRA==", "123456789", false, "97815047-1d7b-47c4-9eca-201de6536d8b", "Main Street", false, "bidder1" },
+                    { "8e445865-a24d-4543-a6c6-9443d048cdbd", 0, "Dili", "Ministry of Finance", "4c6aa889-d3ca-4b4f-bc9c-2bf8194aad2a", "Timor-Leste", "bidder2@email.com", true, "bidder2", false, null, "Bidder2", "BIDDER2@EMAIL.COM", "BIDDER2", "AQAAAAEAACcQAAAAEHoBB2ITuOVf4VGkmIu2H1N/N8anhRRARtmPKxfgKY5NtP4mv93jbUCV8JiMgthiGQ==", "123456789", false, "f1184520-94bd-4bbf-8347-aa312bdb875c", "Main Street", false, "bidder2" },
+                    { "8e445865-a24d-4543-a6c6-9443d048cdbe", 0, "Dili", "Ministry of Finance", "3d9bfa2b-e963-4e92-ab17-977ad994856b", "Timor-Leste", "bidder3@email.com", true, "bidder3", false, null, "Bidder3", "BIDDER3@EMAIL.COM", "BIDDER3", "AQAAAAEAACcQAAAAEI4oJxlEUfyX0I34PNGC8pmymRoJeAoGDV3NxvOe7Cq/WmpGxQ4s8UMXgLxzt9E/lQ==", "123456789", false, "bb0ba077-31cc-4f66-ad15-159309c9f42c", "Main Street", false, "bidder3" },
+                    { "8e445865-a24d-4543-a6c6-9443d048cdbf", 0, "Dili", "Ministry of Finance", "6d984ac5-1520-4849-8811-a0bea173c323", "Timor-Leste", "bidder4@email.com", true, "bidder4", false, null, "Bidder4", "BIDDER4@EMAIL.COM", "BIDDER4", "AQAAAAEAACcQAAAAEMO7Bst+GAKx2cpEF3O1oFO3PZul3i9mTgWn8aUiWA1R7zP8bpYX1mMivFzDWXyd6A==", "123456789", false, "27693a92-21fa-4620-b874-306837e9b452", "Main Street", false, "bidder4" }
                 });
 
             migrationBuilder.InsertData(
@@ -296,9 +291,9 @@ namespace DataRoom.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Project_ApplicationUserId",
+                name: "IX_Project_OwnerId",
                 table: "Project",
-                column: "ApplicationUserId");
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",

@@ -27,7 +27,8 @@ namespace DataRoom
 
             modelBuilder.Entity<ApplicationUser>().ToTable("Users");
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
-            
+            modelBuilder.Entity<Project>().HasOne(r => r.Owner).WithMany(u => u.Projects).HasForeignKey(r => r.OwnerId).IsRequired().OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Seed();
 
             // This is to stop a cascade delete action. You need to delete the child first only then delete parent record

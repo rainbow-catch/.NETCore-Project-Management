@@ -16,8 +16,6 @@ namespace DataRoom.Models
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Boolean IsActive { get; set; }
-
-        [ForeignKey("OwnerId")]
         public string OwnerId { get; set; }
         public virtual ApplicationUser Owner { get; set; }
         public List<BidderProject> ProjectBidders { get; set; }
